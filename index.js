@@ -1,22 +1,22 @@
-
-
 import { Server } from "socket.io";
 import { createServer } from "http";
-const socket = createServer();
-
-
-
-
-//import socketIO from "socket.io";
-//import http from "http";
 import express from "express";
 import cors from "cors";
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 
-const server = createServer(app);
-const io = new Server();
+const socketServer = createServer(app);
 
+
+
+const io = new Server(socketServer, {
+  cors: {
+    origin: ["http://localhost:3000", "https://clientecov.vercel.app"],
+    methods: ["GET", "POST"],
+  },
+});
 
 import dotenv from 'dotenv'
 
@@ -24,9 +24,6 @@ dotenv.config({
   path: "./.env",
 });
 
-
-app.use(cors());
-app.use(express.json());
 
 
 app.get("/", (req, res) => {
@@ -65,6 +62,7 @@ io.on("connection", (socket) => {
   socket.on("addUser", (userId) => {
     addUser(userId, socket.id);
     io.emit("getUsers", users);
+
   });
 
   // send and get message
@@ -124,6 +122,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(process.env.PORT || 4000, () => {
+socketServer.listen(process.env.PORT || 4000, () => {
   console.log(`server is running on port ${process.env.PORT || 4000}`);
 });
