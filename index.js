@@ -2,21 +2,18 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import express from "express";
 import cors from "cors";
-
 const app = express();
-app.use(cors());
-app.use(express.json());
-
 const socketServer = createServer(app);
 
 
 
-const io = new Server(socketServer, {
-  cors: {
-    origin: ["http://localhost:3000", "https://clientecov.vercel.app"],
-    methods: ["GET", "POST"],
-  },
-});
+app.use(cors());
+app.use(express.json());
+
+
+
+
+const io = new Server(socketServer);
 
 import dotenv from 'dotenv'
 
